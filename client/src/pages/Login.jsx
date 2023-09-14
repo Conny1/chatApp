@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+import axios from "axios";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 
 const Container = styled.div`
@@ -35,19 +37,52 @@ const Btn = styled.button`
 `;
 
 export const Login = () => {
+  const [email, setemail] = useState("");
+  const [password, setpassword] = useState("");
+  const navigate = useNavigate();
+  const btnLogin = async (e) => {
+    e.preventDefault();
+    console.log(import.meta.env.VITE_URL);
+    const results = await axios.post(
+      `${import.meta.env.VITE_URL}/api/user/signin`,
+      {
+        email,
+        password,
+      }
+    );
+
+    const response = results?.data;
+    // console.log(response);
+    if (response?.sucess) {
+      return navigate("/");
+    }
+    if (response?.message) {
+      alert(response?.message);
+    }
+  };
   return (
     <Container>
       <h1>Login</h1>
       <Form>
         <Item>
-          <Input type="email" placeholder="email" required />
+          <Input
+            type="email"
+            onChange={(e) => setemail(e.target.value)}
+            placeholder="email"
+            required
+          />
         </Item>
 
         <Item>
-          <Input type="password" placeholder="password" required />
+          <Input
+            type="password"
+            onChange={(e) => setpassword(e.target.value)}
+            placeholder="password"
+            required
+          />
         </Item>
 
-        <Btn>Log in</Btn>
+        <Btn onClick={btnLogin}>Log in</Btn>
 
         <Link to="/register">Don&#39;t have an account? Register</Link>
       </Form>

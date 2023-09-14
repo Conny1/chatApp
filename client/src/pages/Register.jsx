@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+import axios from "axios";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 
 const Container = styled.div`
@@ -35,23 +37,64 @@ const Btn = styled.button`
 `;
 
 export const Register = () => {
+  const [name, setname] = useState("");
+  const [email, setemail] = useState("");
+  const [password, setpassword] = useState("");
+  const navigate = useNavigate();
+  const btnRegister = async (e) => {
+    e.preventDefault();
+    console.log(import.meta.env.VITE_URL);
+    const results = await axios.post(
+      `${import.meta.env.VITE_URL}/api/user/signup`,
+      {
+        name,
+        email,
+        password,
+      }
+    );
+
+    const response = results?.data;
+    // console.log(response);
+    if (response?.sucess) {
+      return navigate("/login");
+    }
+    if (response?.message) {
+      alert(response?.message);
+    }
+  };
+
   return (
     <Container>
       <h1>Creat an account</h1>
       <Form>
         <Item>
-          <Input type="text" placeholder="Name" required />
+          <Input
+            type="text"
+            onChange={(e) => setname(e.target.value)}
+            placeholder="Name"
+            required
+          />
         </Item>
 
         <Item>
-          <Input type="email" placeholder="email" required />
+          <Input
+            type="email"
+            onChange={(e) => setemail(e.target.value)}
+            placeholder="email"
+            required
+          />
         </Item>
 
         <Item>
-          <Input type="password" placeholder="password" required />
+          <Input
+            type="password"
+            onChange={(e) => setpassword(e.target.value)}
+            placeholder="password"
+            required
+          />
         </Item>
 
-        <Btn>Sign up</Btn>
+        <Btn onClick={btnRegister}>Sign up</Btn>
 
         <Link to="/login">Already have an account? Login</Link>
       </Form>
